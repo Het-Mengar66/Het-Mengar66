@@ -2,19 +2,20 @@ name: 🐍 Generate Snake Animation
 
 on:
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
-
-permissions:
-  contents: write
+  push:
+    branches: [main]
 
 jobs:
   generate:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Generate snake animation
+      - name: Generate Snake (Light + Dark)
         uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
