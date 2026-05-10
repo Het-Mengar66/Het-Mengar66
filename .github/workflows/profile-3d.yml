@@ -2,25 +2,45 @@ name: 🌍 Generate 3D Contribution Graph
 
 on:
   schedule:
-    - cron: "0 0 */3 * *"
+    - cron: "0 0 * * *"
   workflow_dispatch:
-
-permissions:
-  contents: write
+  push:
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: Generate 3D Graph
+    permissions:
+      contents: write        # ← THIS was missing — add this line
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: yoshi389111/github-profile-3d-contrib@0.7.1
+      - uses: actions/checkout@v3
+
+      - name: Generate 3D Contribution Graph
+        uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
-      - name: Commit & push
+        with:
+          SETTING_JSON: |
+            {
+              "githubUserName": "Het-Mengar66",
+              "title": "Het Mengar's Contributions",
+              "top50": false,
+              "oneWeekInEvery": 1,
+              "angle": 30,
+              "diffCoefficient": 0.3,
+              "enableAnimation": true,
+              "filename": "profile-night-green.svg",
+              "backgroundColor": "#0d1117",
+              "days": 365
+            }
+
+      - name: Commit & Push Graph
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
           git add -A
-          git diff --staged --quiet || git commit -m "Update 3D contribution graph"
+          git commit -m "📊 Auto-update 3D contribution graph" --allow-empty
           git push
